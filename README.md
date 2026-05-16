@@ -1,8 +1,4 @@
-# Reserva de Salas de Estudo
-
-
-# AUTORES
-
-Bruno Marques
-
-Bruno Shiohei   
+# Reserva de Salas de Estudo - Extensão
+## Autores:
+Anderson Soares de Oliveira
+Bruno Shiohei Kinoshita do Nascimento
