@@ -15,6 +15,10 @@ import {
   PoliticaPrioridadeDocente,
 } from "../patterns/strategy/PoliticaDeReserva.js";
 import { ServicoReservas } from "../services/ServicoReservas.js";
+import {
+  HistoricoReservasProxy,
+  HistoricoReservasReal,
+} from "../patterns/proxy/HistoricoReservasProxy.js";
 
 function amanha(h: number, m: number): Date {
   const d = new Date();
@@ -36,6 +40,10 @@ async function bootstrap() {
   console.log("Campus:", cfg.nomeCampus);
 
   const repo = RepositorioCampus.getInstance();
+
+  const historicoReal = new HistoricoReservasReal(repo);
+  const historicoProxy = new HistoricoReservasProxy(historicoReal);
+
   const factory = new SalaFactory();
 
   const s1 = factory.criar("INDIVIDUAL", "S1", "Cubículo A", 1);
@@ -124,6 +132,16 @@ async function bootstrap() {
   console.log("\n--- Cancelar ---");
   await servico.cancelarReserva(r2alt.id, docente.id);
   console.log("Cancelada pelo titular.");
+
+  console.log("\n--- Funcionalidade adicional: histórico do usuário ---");
+  const historico = historicoProxy.obterHistoricoUsuario(estudante.id);
+  for (const r of historico) {
+    console.log(
+      `Reserva ${r.id} | Sala ${r.salaId} | ${r.status} | ${fmt(r.inicio)} → ${fmt(r.fim)}`
+    );
+  }
+  console.log("\n--- Consulta novamente (cache do Proxy) ---");
+  historicoProxy.obterHistoricoUsuario(estudante.id);
 }
 
 bootstrap().catch((e) => {
